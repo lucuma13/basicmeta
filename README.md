@@ -45,3 +45,7 @@ brew install basicmeta
 | \`--version\` | | Print version |
 
 The `<path>` can be a single file or a directory.
+
+#### 🧪 Feedback & Contributing
+
+If this tool fails to parse metadata from your specific camera files, or if you have ideas for improvement, please fork the repository and submit a pull request, or message me directly with a sample of the problematic metadata output. Help me make this tool more robust for the DIT community!
