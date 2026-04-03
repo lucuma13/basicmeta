@@ -42,7 +42,7 @@ brew install basicmeta
 | :--- | :--- |
 | `-f` | Force analysis of non-camera video containers (MKV, AVI, M4V, MTS, FLV, WebM) |
 | `-h` | Show help message |
-| `--version` | | Print version |
+| `--version` | Print version |
 
 The `<path>` can be a single file or a directory.
 
