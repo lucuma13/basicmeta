@@ -44,7 +44,7 @@ brew install basicmeta
 | `-h` | Show help message |
 | `--version` | Print version |
 
-The `<path>` can be a single file or a directory.
+The `<path>` can be a single file or a directory, or the current directory if left blank.
 
 #### 🧪 Feedback & Contributing
 
