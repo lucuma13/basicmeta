@@ -1,6 +1,6 @@
 # basicmeta
 
-A lightweight metadata utility designed for Digital Imaging Technicians (DITs) to perform rapid sanity checks on original camera files (OCF).
+A lightweight metadata utility designed for Digital Imaging Technicians (DITs) to perform quick checks on original camera files (OCF).
 
 #### 📋 Description
 
