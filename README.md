@@ -26,12 +26,12 @@ It supports common professional acquisition formats:
 #### 🚀 Installation
 
 1. Install [Homebrew](https://brew.sh/) (if not already installed):
-```sh
+```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 2. Tap and install:
-```console
+```
 brew tap lucuma13/homebrew-dit
 brew install basicmeta
 ```
