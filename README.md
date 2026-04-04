@@ -39,7 +39,7 @@ brew install basicmeta
 `basicmeta [options] <path>`
 
 | Option | Description |
-| :--- | :--- |
+| :---: | :--- |
 | `-f` | Force analysis of non-camera video containers (MKV, AVI, M4V, MTS, FLV, WebM) |
 | `-h` | Show help message |
 | `--version` | Print version |
