@@ -3,6 +3,9 @@
 # basicmeta - A basic metadata utility for sanity checking original camera files (frame rate, resolution and encoded date).
 readonly BASICMETA_VERSION="1.0"
 
+# Copyright (c) 2026 Luis Gómez Gutiérrez
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
 function basicmeta_show_help() {
 	echo "basicmeta v$BASICMETA_VERSION. A basic metadata utility for sanity checking original camera files"
 	echo
