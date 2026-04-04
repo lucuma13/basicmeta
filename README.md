@@ -16,20 +16,22 @@ It supports common professional acquisition formats:
 * macOS
 * Linux
 
-#### 🛠 Dependencies
+#### 🛠️ Dependencies
 
-* [MediaInfo](https://github.com/mediaarea/mediainfo)
-* [exiftool](https://github.com/exiftool/exiftool)
+`basicmeta` relies on the following metadata engines:
+
+* [MediaInfo](https://github.com/mediaarea/mediainfo) © 2002-2025, MediaArea.net SARL (BSD 2-Clause)
+* [ExifTool](https://github.com/exiftool/exiftool) © 2003-2026, Phil Harvey (GPL-3.0)
 
 #### 🚀 Installation
 
 1. Install [Homebrew](https://brew.sh/) (if not already installed):
-```
+```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 2. Tap and install:
-```
+```console
 brew tap lucuma13/homebrew-dit
 brew install basicmeta
 ```
