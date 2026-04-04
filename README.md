@@ -20,8 +20,8 @@ It supports common professional acquisition formats:
 
 `basicmeta` relies on the following metadata engines:
 
-* [MediaInfo](https://github.com/mediaarea/mediainfo) © 2002-2025, MediaArea.net SARL (BSD 2-Clause)
-* [ExifTool](https://github.com/exiftool/exiftool) © 2003-2026, Phil Harvey (GPL-3.0)
+* [MediaInfo](https://github.com/mediaarea/mediainfo) © 2002-2025 MediaArea.net SARL (BSD 2-Clause)
+* [ExifTool](https://github.com/exiftool/exiftool) © 2003-2026 Phil Harvey (GPL-3.0)
 
 #### 🚀 Installation
 
