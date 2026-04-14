@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # basicmeta - A basic metadata utility for sanity checking original camera files (frame rate, resolution and encoded date).
-readonly BASICMETA_VERSION="1.0"
+readonly BASICMETA_VERSION="1.1"
 
 # Copyright (c) 2026 Luis Gómez Gutiérrez
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -48,30 +48,37 @@ function get_metadata() {
 		dim="\033[38;5;246m"
 		red="\033[0;31m"
 		reset="\033[0m"
-		error_msg="${red}${error_text}${reset}"
-	else
-		error_msg="${error_text}"
 	fi
+	local error_msg="$error_text"
 	
 	case "$ext" in
 		mxf|mp4|mov)
 			local res=$(mediainfo --Inform="Video;%Width% x %Height%" "$f")
-			local full_meta=$(mediainfo --Inform="General;%FrameRate% fps -- REPLACE_RES -- %Encoded_Date% " "$f")
-			local fname=$(mediainfo --Inform="General;(%FileNameExtension%)" "$f")
+			local full_meta=$(mediainfo --Inform="General;%FrameRate% fps -- REPLACE_RES -- %Encoded_Date% -- (%FileNameExtension%)" "$f")
+			full_meta="${full_meta//.000 / }" 
+			full_meta=$(echo "$full_meta" | sed 's/\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)[^-]*--/\1 --/') 
+
+			# Prepare presentation variables
+			local colored_unknown="${red}${error_text}${reset}"
+			local colored_date_error="${red}Unknown date${reset}"
 			
-			full_meta="${full_meta//.000 / }"
-			# Error message if fps is missing (starts with a space or the line starting directly with "fps")
-			[[ "$full_meta" =~ ^([[:space:]]|fps) ]] && full_meta="${error_msg} ${full_meta#* }"
+			# Handle variables
+			[[ "$full_meta" =~ ^([[:space:]]|fps) ]] && full_meta="${colored_unknown} ${full_meta#* }"
+			local final_res="${res:-$colored_unknown}"
+			full_meta="${full_meta/REPLACE_RES/$final_res}"
+			[[ "$full_meta" == *" --  -- "* ]] && full_meta="${full_meta/ --  -- / -- ${colored_date_error} -- }"
 			
-			local output="${full_meta/REPLACE_RES/${res:-$error_msg}}"
-			printf "%s%b%s%b\n" "$output" "$dim" "$fname" "$reset"
+			local meta_part="${full_meta% -- (*}"
+			local fname=" (${full_meta##*-- (}"
+
+			printf "%b %b%s%b\n" "$meta_part" "$dim" "$fname" "$reset"
 			;;
 		r3d)
 			local fps="" date="" w="" h="" name=""
 			while IFS=': ' read -r key val; do
 				case "$key" in
 					FrameRate) fps="${val%.000}" ;;
-					DateTimeOriginal) date=$(echo "$val" | sed -e 's/:/-/2' -e 's/:/-/1') ;;
+					DateTimeOriginal) date=$(echo "$val" | sed -e 's/:/-/2' -e 's/:/-/1' | cut -c 1-10) ;;
 					ImageWidth) w="$val" ;;
 					ImageHeight) h="$val" ;;
 					Filename|FileName) name="$val" ;;
@@ -86,28 +93,57 @@ function get_metadata() {
 			;;
 		wav)
 			local fps="" date="" name=""
+			local error_fps="Unknown"
+			local error_date="Unknown date"
+
 			while IFS=': ' read -r key val; do
 				case "$key" in
-					BwfxmlSpeedTimecodeRate) fps="${val%.000}" ;;
-					DateTimeOriginal) date=$(echo "$val" | sed -e 's/:/-/2' -e 's/:/-/1') ;;
-					Filename|FileName) name="$val" ;;
+					BwfxmlSpeedTimecodeRate|iXML:SampleRate|Speed|VideoFrameRate)
+						if [[ -z "$fps" ]]; then
+							fps=$(printf "%.3f" "$val" 2>/dev/null || echo "$val")
+							fps="${fps%.000}" 
+						fi
+						;;
+					DateTimeOriginal|DateCreated|OriginatorReference|BwfxmlBextBwfOriginationDate)
+						# Capture date, but ignore the "zero" date
+						if [[ -z "$date" && "$val" =~ [1-9] ]]; then
+							date=$(echo "$val" | sed -e 's/:/-/2' -e 's/:/-/1' | cut -c 1-10)
+						fi
+						;;
+					Filename|FileName)
+						name="$val"
+						;;
 				esac
-			done < <(exiftool -s -s -BwfxmlSpeedTimecodeRate -DateTimeOriginal -Filename "$f")
+			done < <(exiftool -s -s -BwfxmlSpeedTimecodeRate -iXML:SampleRate -Speed -VideoFrameRate -DateTimeOriginal -DateCreated -BwfxmlBextBwfOriginationDate -Filename "$f")
 			
-			: "${fps:=$error_msg}"
-			printf "%s fps -- %s %b(%s)%b\n" "$fps" "$date" "$dim" "$name" "$reset"
+			# Handle Frame Rate and Date display
+			local display_fps="${fps:-$error_fps}"
+			[[ "$display_fps" == "$error_fps" && -n "$red" ]] && display_fps="${red}${display_fps}${reset}"
+			local display_date="${date:-$error_date}"
+			[[ "$display_date" == "$error_date" && -n "$red" ]] && display_date="${red}${display_date}${reset}"
+
+			printf "%b fps -- Audio -- %b %b(%s)%b\n" "$display_fps" "$display_date" "$dim" "$name" "$reset"
 			;;
 		mkv|avi|m4v|mts|flv|webm)
-			if [[ "$force" == "true" ]]; then
-				local res=$(mediainfo --Inform="Video;%Width% x %Height%" "$f")
-				local full_meta=$(mediainfo --Inform="General;%FrameRate% fps -- REPLACE_RES -- %Encoded_Date% " "$f")
-				local fname=$(mediainfo --Inform="General;(%FileNameExtension%)" "$f")
-				full_meta="${full_meta//.000 / }"
-				local output="${full_meta/REPLACE_RES/${res:-$error_msg}}"
-				printf "%s%b%s%b\n" "$output" "$dim" "$fname" "$reset"
-			else
-				echo "Non-camera video container found: $ext. Use -f to force analysis."
-			fi
+			local res=$(mediainfo --Inform="Video;%Width% x %Height%" "$f")
+			local full_meta=$(mediainfo --Inform="General;%FrameRate% fps -- REPLACE_RES -- %Encoded_Date% -- (%FileNameExtension%)" "$f")
+			full_meta="${full_meta//.000 / }" 
+			full_meta=$(echo "$full_meta" | sed 's/\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)[^-]*--/\1 --/') 
+
+			# Prepare presentation variables
+			local colored_unknown="${red}${error_text}${reset}"
+			local colored_date_error="${red}Unknown date${reset}"
+			
+			# Handle variables
+			[[ "$full_meta" =~ ^([[:space:]]|fps) ]] && full_meta="${colored_unknown} ${full_meta#* }"
+			local final_res="${res:-$colored_unknown}"
+			full_meta="${full_meta/REPLACE_RES/$final_res}"
+			[[ "$full_meta" == *" --  -- "* ]] && full_meta="${full_meta/ --  -- / -- ${colored_date_error} -- }"
+			
+			local meta_part="${full_meta% -- (*}"
+			local fname=" (${full_meta##*-- (}"
+
+			printf "%b %b%s%b\n" "$meta_part" "$dim" "$fname" "$reset"
 			;;
 	esac
 }
