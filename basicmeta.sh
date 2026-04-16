@@ -4,9 +4,9 @@
 readonly BASICMETA_VERSION="1.1"
 
 # Copyright (c) 2026 Luis Gómez Gutiérrez
-# This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# Licensed under the MIT License. See the LICENSE file in the project root for full license information.
 
-function basicmeta_show_help() {
+function show_help() {
 	echo "basicmeta v$BASICMETA_VERSION. A basic metadata utility for sanity checking original camera files"
 	echo
 	echo "Usage: basicmeta [options] <path>"
@@ -19,21 +19,14 @@ function basicmeta_show_help() {
 }
 
 function get_abs_path() {
-	local user_path="${1:-.}"
-	
-	if [[ -d "$user_path" ]]; then
-		(cd "$user_path" && pwd)
-	elif [[ -f "$user_path" ]]; then
-		echo "$(cd "$(dirname "$user_path")" && pwd)/$(basename "$user_path")"
-	else
-		local dir
-		dir=$(dirname "$user_path")
-		if [[ -d "$dir" ]]; then
-			echo "$(cd "$dir" && pwd)/$(basename "$user_path")"
-		else
-			echo "$user_path"
-		fi
-	fi
+    local user_path="${1:-.}"
+    if [[ -d "$user_path" ]]; then
+        (cd "$user_path" && pwd)
+    elif [[ -f "$user_path" ]]; then
+        echo "$(cd "$(dirname "$user_path")" && pwd)/$(basename "$user_path")"
+    else
+        echo "$user_path"
+    fi
 }
 
 function get_metadata() {
@@ -150,7 +143,7 @@ function get_metadata() {
 
 # Long-format flags
 [[ "$1" == "--version" ]] && { echo "$BASICMETA_VERSION"; exit 0; }
-[[ "$1" == "--help" ]] && basicmeta_show_help
+[[ "$1" == "--help" ]] && show_help
 
 # Short-format flags
 bm_force=false
@@ -158,8 +151,8 @@ while getopts "fh" option
 do
 	case $option in
 		f) bm_force=true ;;
-		h) basicmeta_show_help ;;
-		*) basicmeta_show_help ;;
+		h) show_help ;;
+		*) show_help ;;
 	esac
 
 done
