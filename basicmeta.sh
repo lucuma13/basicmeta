@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# basicmeta - A basic metadata utility for sanity checking original camera files (frame rate, resolution and encoded date).
+# basicmeta - Metadata utility for quick checking original camera files
 readonly BASICMETA_VERSION="1.1"
 
 # Copyright (c) 2026 Luis Gómez Gutiérrez
