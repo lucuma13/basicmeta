@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # basicmeta - Metadata utility for quick checking original camera files
-readonly BASICMETA_VERSION="1.1"
+readonly VERSION="1.1"
 
 # Copyright (c) 2026 Luis Gómez Gutiérrez
 # Licensed under the MIT License. See the LICENSE file in the project root for full license information.
 
 function show_help() {
-	echo "basicmeta v$BASICMETA_VERSION. A basic metadata utility for sanity checking original camera files"
+	echo "basicmeta v$VERSION. A basic metadata utility for sanity checking original camera files"
 	echo
 	echo "Usage: basicmeta [options] <path>"
 	echo
@@ -15,7 +15,6 @@ function show_help() {
 	echo "  -f : Force analysis of non-camera video containers (MKV, AVI, M4V, MTS, FLV, WebM)"
 	echo "  -h : Show this help message"
 	echo "  --version  : Print version"
-	exit 0
 }
 
 function get_abs_path() {
@@ -142,19 +141,19 @@ function get_metadata() {
 }
 
 # Long-format flags
-[[ "$1" == "--version" ]] && { echo "$BASICMETA_VERSION"; exit 0; }
-[[ "$1" == "--help" ]] && show_help
+case "$1" in
+--version) echo "$VERSION" ; exit 0 ;;
+--help|-h) show_help ; 	exit 0 ;;
+esac
 
 # Short-format flags
-bm_force=false
-while getopts "fh" option
+force=false
+while getopts "f" option
 do
 	case $option in
-		f) bm_force=true ;;
-		h) show_help ;;
-		*) show_help ;;
+		f) force=true ;;
+		*) echo "Error: Invalid option -$OPTARG" >&2 ; show_help ; exit 1 ;;
 	esac
-
 done
 shift "$((OPTIND-1))"
 
@@ -165,11 +164,11 @@ bm_src=$(get_abs_path "${1:-$(pwd)}")
 # --- Execution ---
 
 if [[ -f "$bm_src" ]]; then
-	get_metadata "$bm_src" "$bm_force"
+	get_metadata "$bm_src" "$force"
 elif [[ -d "$bm_src" ]]; then
 	#Consider filter hidden directories with: find "$bm_src" -mindepth 1 -type f ! -path '*/.*' -print0 | sort -z | while IFS= read -r -d '' file; do
 	find "$bm_src" -mindepth 1 -type f -print0 | sort -z | while IFS= read -r -d '' file; do
-		get_metadata "$file" "$bm_force"
+		get_metadata "$file" "$force"
 	done
 else
 	echo "Error: '$bm_src' is not a valid file or directory." >&2
