@@ -7,19 +7,16 @@ It supports common professional acquisition formats:
 * Audio: WAV
 * Other non-camera containers: MKV, AVI, M4V, MTS, FLV, WebM
 
-#### 💻 Compatibility
-
-* macOS
-* Linux
-
-#### 🛠️ Dependencies
+### 🛠️ Dependencies
 
 `basicmeta` relies on the following metadata engines:
 
 * [MediaInfo](https://github.com/mediaarea/mediainfo) © 2002-2025 MediaArea.net SARL (BSD 2-Clause)
 * [ExifTool](https://github.com/exiftool/exiftool) © 2003-2026 Phil Harvey (GPL-3.0)
 
-#### 🚀 Installation
+### 🚀 Installation
+
+##### macOS and Linux
 
 1. Install [Homebrew](https://brew.sh/) (if not already installed):
 ```
@@ -32,7 +29,7 @@ brew tap lucuma13/dit
 brew install basicmeta
 ```
 
-#### 📖 Usage
+### 📖 Usage
 
 `basicmeta [options] <path>`
 
@@ -44,6 +41,6 @@ brew install basicmeta
 
 Note: `<path>` can be a single file or a directory, or the current directory if left blank.
 
-#### 🧪 Feedback & Contributing
+### 🧪 Feedback & Contributing
 
 If this tool fails to parse metadata from your specific camera files, or if you have ideas for improvement, please fork the repository and submit a pull request, or message me directly with a sample of the problematic metadata output. Help me make this tool more robust for the DIT community!
