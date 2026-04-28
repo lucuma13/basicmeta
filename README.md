@@ -1,6 +1,6 @@
-# basicmeta
+# dit-mate (previously `basicmeta`)
 
-`basicmeta` provides a quick overview of essential technical metadata (frame rate, resolution, and encoded date) without the overhead of opening a heavy GUI or a full NLE. It is specifically optimized for DIT workflows to verify clip consistency during data offloading, ingest, or backup verification.
+``basicmeta` provides a quick overview of essential technical metadata (frame rate, resolution, and encoded date) without the overhead of opening a heavy GUI or a full NLE. It is specifically optimized for DIT workflows to verify clip consistency during data offloading, ingest, or backup verification.
 
 It supports common professional acquisition formats:
 * Video: MXF, MOV, MP4, R3D
